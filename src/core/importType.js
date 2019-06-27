@@ -53,6 +53,10 @@ function isScoped(name) {
   return scopedRegExp.test(name)
 }
 
+function isAt(name) {
+  return /^@[\\/]/.test(name)
+}
+
 const scopedMainRegExp = /^@[^/]+\/?[^/]+$/
 export function isScopedMain(name) {
   return scopedMainRegExp.test(name)
@@ -82,11 +86,12 @@ const typeTest = cond([
   [isInternalModule, constant('internal')],
   [isExternalModule, constant('external')],
   [isScoped, constant('external')],
+  [isAt, constant('parent')],
   [isRelativeToParent, constant('parent')],
   [isIndex, constant('index')],
   [isRelativeToSibling, constant('sibling')],
   [constant(true), constant('unknown')],
-])
+]);
 
 export default function resolveImportType(name, context) {
   return typeTest(name, context.settings, resolve(name, context))
